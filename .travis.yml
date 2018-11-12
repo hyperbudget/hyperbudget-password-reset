@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+- "8.10"
+script:
+  - npm install
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then sls deploy -v --force --conceal; fi'
+branches:
+  only:
+    - master

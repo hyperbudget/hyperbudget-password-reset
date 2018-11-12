@@ -6,7 +6,7 @@ provider:
   region: eu-west-2
   stage: ${opt:stage, 'dev'}
   apiKeys:
-    hbQueKey-${opt:stage}
+    - hbQueKey-${self:provider.stage}
   environment:
     DYNAMODB_TABLE: hyperbudget-email-service-${self:provider.stage}
     SQS_QUEUE: hyperbudget-email-service-${self:provider.stage}
@@ -31,35 +31,12 @@ provider:
       Resource: "arn:aws:sqs:${opt:region, self:provider.region}:*:*"
 
 functions:
-  hello:
+  addToQueue:
     handler: handler.addToQueue
     environment:
       SQS_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/504193536768/hyperbudget-email-service-${self:provider.stage}'
-      AWS_REGION: '${self:provider.region}'
+      REGION: '${self:provider.region}'
     events:
       - http:
           path: email/send
           method: post
-
-resources:
-  Resources:
-    sqsQueue:
-      Type: "AWS::SQS::Queue"
-      Properties:
-        QueueName: "${self:provider.environment.SQS_QUEUE}"
-    UserEmailDBTable:
-      Type: "AWS::DynamoDB::Table"
-      DeletionPolicy: Retain
-      Properties:
-        AttributeDefinitions:
-          -
-            AttributeName: "Id"
-            AttributeType: "S"
-        KeySchema:
-          -
-            AttributeName: "Id"
-            KeyType: "HASH"
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
