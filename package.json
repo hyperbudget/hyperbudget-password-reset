@@ -5,7 +5,8 @@
   "main": "handler.js",
   "dependencies": {},
   "devDependencies": {
-    "@types/aws-sdk": "^2.7.0"
+    "@types/aws-sdk": "^2.7.0",
+    "serverless-offline": "^3.31.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

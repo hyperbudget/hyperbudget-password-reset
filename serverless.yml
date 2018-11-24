@@ -1,4 +1,7 @@
-service: hyperbudget-queue-email
+service: hyperbudget-password-reset
+
+plugins:
+  - serverless-offline
 
 provider:
   name: aws
@@ -6,9 +9,9 @@ provider:
   region: eu-west-2
   stage: ${opt:stage, 'dev'}
   apiKeys:
-    - hbQueKey-${self:provider.stage}
+    - hbQueKey3-${self:provider.stage}
   environment:
-    DYNAMODB_TABLE: hyperbudget-email-service-${self:provider.stage}
+    DYNAMODB_TABLE: ${self:service}3-${self:provider.stage}
     SQS_QUEUE: hyperbudget-email-service-${self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
@@ -31,8 +34,8 @@ provider:
       Resource: "arn:aws:sqs:${opt:region, self:provider.region}:*:*"
 
 functions:
-  addToQueue:
-    handler: handler.addToQueue
+  sendPasswordReset:
+    handler: handler.sendPasswordReset
     environment:
       SQS_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/504193536768/hyperbudget-email-service-${self:provider.stage}'
       REGION: '${self:provider.region}'
@@ -40,3 +43,31 @@ functions:
       - http:
           path: email/send
           method: post
+  checkToken:
+    handler: handler.checkToken
+    environment:
+      SQS_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/504193536768/hyperbudget-email-service-${self:provider.stage}'
+      REGION: '${self:provider.region}'
+    events:
+      - http:
+          path: token/verify
+          method: post
+
+resources:
+  Resources:
+    UserEmailDDBTable:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          -
+            AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
