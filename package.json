@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "handler.js",
-  "dependencies": {},
+  "dependencies": {
+    "aws-sdk": "^2.361.0",
+    "serverless": "^1.33.2"
+  },
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",
     "serverless-offline": "^3.31.3"
