@@ -103,7 +103,7 @@ resources:
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
     BodyValidator:
-      Type: 'AWS::ApiGateWay::RequestValidator'
+      Type: 'AWS::ApiGateway::RequestValidator'
       Properties:
         Name: 'body-validator'
         RestApiId:
