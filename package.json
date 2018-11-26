@@ -9,7 +9,9 @@
   },
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",
-    "serverless-offline": "^3.31.3"
+    "serverless-aws-documentation": "^1.1.0",
+    "serverless-offline": "^3.31.3",
+    "serverless-reqvalidator-plugin": "^1.0.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
