@@ -5,10 +5,14 @@
   "main": "handler.js",
   "dependencies": {
     "aws-sdk": "^2.361.0",
+    "bcrypt": "^3.0.2",
     "serverless": "^1.33.2"
   },
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",
+    "@types/bcrypt": "^3.0.0",
+    "@types/random-string": "0.0.28",
+    "random-string": "^0.2.0",
     "serverless-aws-documentation": "^1.1.0",
     "serverless-offline": "^3.31.3",
     "serverless-reqvalidator-plugin": "^1.0.3"

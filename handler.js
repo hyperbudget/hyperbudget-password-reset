@@ -1,5 +1,8 @@
 'use strict';
 
+const randomString = require('random-string');
+const bcryptPromise = require('./lib/bcrypt-promise');
+
 const awsArgs = {
   region: process.env.REGION,
   endpoint: null || process.env.DBD_ENDPOINT,
@@ -12,9 +15,12 @@ module.exports.sendPasswordReset = async (event, context) => {
   const queue = process.env.SQS_QUEUE_URL;
   const body = JSON.parse(event.body);
 
-  const token = 'test2';
+  let token = randomString({ length: 20 });
+  console.log(token);
 
   try {
+    const hashedToken = await bcryptPromise.bcryptHash(token, 10);
+
     await Promise.all([
       queueWrapper.addToQueue({
         queue,
@@ -29,7 +35,7 @@ module.exports.sendPasswordReset = async (event, context) => {
       ddbWrapper.addToTable(
         {
           "id": body.userId,
-          token,
+          token: hashedToken,
         }
       )
     ]);
@@ -50,6 +56,7 @@ module.exports.sendPasswordReset = async (event, context) => {
 module.exports.checkToken = async (event, context) => {
   const body = JSON.parse(event.body);
   try {
+    const token = body.token;
     const data = await ddbWrapper.getItem({
       id: body.userId
     });
@@ -58,7 +65,7 @@ module.exports.checkToken = async (event, context) => {
       !data ||
       !data.Item ||
       !data.Item.token ||
-      data.Item.token !== body.token
+      !await bcryptPromise.checkHash(token, data.Item.token)
     ) {
       return {
         statusCode: 422,
