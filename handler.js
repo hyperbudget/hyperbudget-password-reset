@@ -76,6 +76,8 @@ module.exports.checkToken = async (event, context) => {
       }
     }
 
+    await ddbWrapper.deleteItem({ id: body.userId });
+
     return {
       statusCode: 200,
       body: JSON.stringify({
