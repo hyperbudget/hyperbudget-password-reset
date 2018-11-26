@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "userId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    }
+  },
+  "required":[
+    "email",
+    "userId"
+  ]
+}

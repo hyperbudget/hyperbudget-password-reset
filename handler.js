@@ -18,13 +18,14 @@ module.exports.sendPasswordReset = async (event, context) => {
         queue,
         message: {
           "email": body.email,
+          "userId": body.userId,
           "name": body.name,
-          "type": body.type || 'reset_password'
+          "type": 'reset_password'
         },
       }),
       ddbWrapper.addToTable(
         {
-          id: body.email,
+          id: body.userId,
           token: 'test2',
         }
       )
@@ -46,7 +47,7 @@ module.exports.sendPasswordReset = async (event, context) => {
 module.exports.checkToken = async (event, context) => {
   const body = JSON.parse(event.body);
   try {
-    const data = await ddbWrapper.getItem({ id: body.email });
+    const data = await ddbWrapper.getItem({ id: body.userId });
 
     if (
       !data ||

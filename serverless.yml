@@ -2,6 +2,8 @@ service: hyperbudget-password-reset
 
 plugins:
   - serverless-offline
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
 
 provider:
   name: aws
@@ -33,6 +35,25 @@ provider:
         - "sqs:ListQueues"
       Resource: "arn:aws:sqs:${opt:region, self:provider.region}:*:*"
 
+custom:
+  documentation:
+    api:
+      info:
+        version: '0.0.1'
+        title: 'hyperbudget-password-reset'
+        description: 'Password reset service'
+    models:
+      -
+        name: ResetEmailRequest
+        description: 'Model for the password reset request'
+        contentType: 'application/json'
+        schema: ${file(jsonschema/ResetEmail.json)}
+      -
+        name: ValidateTokenRequest
+        description: 'Validate a password reset token'
+        contentType: 'application/json'
+        schema: ${fole(jsonschema/ValidateToken.json)}
+
 functions:
   sendPasswordReset:
     handler: handler.sendPasswordReset
@@ -43,6 +64,11 @@ functions:
       - http:
           path: email/send
           method: post
+          reqValidatorName: 'BodyValidator'
+          documentation:
+            summary: 'Send a password reset email'
+            requestModels:
+              'application/json': 'ResetEmailRequest'
   checkToken:
     handler: handler.checkToken
     environment:
@@ -52,6 +78,11 @@ functions:
       - http:
           path: token/verify
           method: post
+          reqValidatorName: 'BodyValidator'
+          documentation:
+            summary: 'Verify a password reset token'
+            requestModels:
+              'application/json': 'ValidateTokenRequest'
 
 resources:
   Resources:
@@ -71,3 +102,11 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
+    BodyValidator:
+      Type: 'AWS::ApiGateWay::RequestValidator'
+      Properties:
+        Name: 'body-validator'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
