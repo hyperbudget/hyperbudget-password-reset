@@ -16,7 +16,6 @@ module.exports.sendPasswordReset = async (event, context) => {
   const body = JSON.parse(event.body);
 
   let token = randomString({ length: 20 });
-  console.log(token);
 
   try {
     const hashedToken = await bcryptPromise.bcryptHash(token, 10);
