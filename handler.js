@@ -47,7 +47,9 @@ module.exports.sendPasswordReset = async (event, context) => {
 module.exports.checkToken = async (event, context) => {
   const body = JSON.parse(event.body);
   try {
-    const data = await ddbWrapper.getItem({ id: body.userId });
+    const data = await ddbWrapper.getItem({
+      id: body.userId
+    });
 
     if (
       !data ||

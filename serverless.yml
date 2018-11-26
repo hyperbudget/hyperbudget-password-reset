@@ -52,7 +52,7 @@ custom:
         name: ValidateTokenRequest
         description: 'Validate a password reset token'
         contentType: 'application/json'
-        schema: ${fole(jsonschema/ValidateToken.json)}
+        schema: ${file(jsonschema/ValidateToken.json)}
 
 functions:
   sendPasswordReset:
