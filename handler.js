@@ -12,6 +12,8 @@ module.exports.sendPasswordReset = async (event, context) => {
   const queue = process.env.SQS_QUEUE_URL;
   const body = JSON.parse(event.body);
 
+  const token = 'test2';
+
   try {
     await Promise.all([
       queueWrapper.addToQueue({
@@ -20,13 +22,14 @@ module.exports.sendPasswordReset = async (event, context) => {
           "email": body.email,
           "userId": body.userId,
           "name": body.name,
-          "type": 'reset_password'
+          "type": "reset_password",
+          token,
         },
       }),
       ddbWrapper.addToTable(
         {
-          id: body.userId,
-          token: 'test2',
+          "id": body.userId,
+          token,
         }
       )
     ]);
